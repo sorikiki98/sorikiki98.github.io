@@ -12,6 +12,7 @@ My name is Dasol Kim. I have the following qualities:
 What else do you like?
 
 - I often spend my time reading novels, doing pilates and learning new languages(ps. Korean and English are my primary languages.)
+- I went to Canada as my exchange and it inspirse me to dream about working abroad in the future. So I'm gonna write down all of my posts in English.
 
 ### My story
 
