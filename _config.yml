@@ -21,10 +21,7 @@ author: Dasol Kim
 
 navbar-links:
   About Me: 'aboutme'
-  Resources:
-    - Beautiful Jekyll: 'https://beautifuljekyll.com'
-    - Learn markdown: 'https://www.markdowntutorial.com/'
-  Author's home: 'https://deanattali.com'
+  Author's home: 'https://github.com/sorikiki98'
 
 ################
 # --- Logo --- #
@@ -51,7 +48,7 @@ social-network-links:
   email: 'sorikiki98@gmail.com'
   rss: true # remove this line if you don't want to show an RSS link at the bottom
   #  facebook: deanattali
-  github: https://github.com/sorikiki98
+  github: 'https://github.com/sorikiki98'
 #  twitter: daattali
 #  patreon: DeanAttali
 #  youtube: c/daattali
