@@ -3,7 +3,7 @@ layout: post
 title: The way how I design and document Web APIs
 subtitle: Swagger
 comments: true
-tags: [NodeJS, Express, Typescript]
+tags: [Swagger]
 ---
 
 Mostly I prefer designing APIs in advance over coding first. This improves communication and collaboration between team members before and during our project, so it is worth investing your time to develop and deliver APIs. In this project, I used an open api specification(version 3.0.0) to organize and display APIs as a document definition with a Swagger tool, called Swagger Editor.
