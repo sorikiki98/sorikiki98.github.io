@@ -1,0 +1,178 @@
+---
+layout: post
+title: The way how I design and document Web APIs
+subtitle: Swagger
+comments: true
+tags: [NodeJS, Express, Typescript]
+---
+
+Mostly I prefer designing APIs in advance over coding first. This improves communication and collaboration between team members before and during our project, so it is worth investing your time to develop and deliver APIs. In this project, I used an open api specification(version 3.0.0) to organize and display APIs as a document definition with a Swagger tool, called Swagger Editor.
+I referred to a Open API Specification document on [this website](https://swagger.io/specification/).
+
+** Before demo **
+Formatting your documentation as a **yaml** makes it more easy to understand. In this case, you have to install 'yamljs' package to load yaml and switch it to a JSON format. Additionally, to display APIs which is available to see on a seperate url, 'swagger-ui-express' package is also required to install.
+
+**npm install yamljs**
+**npm install swagger-ui-express**
+
+Now, it's time to code up our own open api documentation using a [Swagger Editor](https://swagger.io/tools/swagger-editor/). In my code, it primarily consists of openapi, info, server, tags, paths and components. Let's look up some core implementation to grasp how it has to be written.
+
+```yaml
+tags:
+  - name: user
+    description: Methods to access and manage users
+  - name: bugs
+    description: Methods to access bug information and add a survey result
+  - name: companies
+    description: Methods to access company information and manage company interests and reservation
+  - name: products
+    description: Methods to access product information and manage product interests
+```
+
+I divided APIs into four categories(user, bugs, companies, products) to clarify which resources user request. You can either check which services my project is providing.
+
+```yaml
+paths:
+  /user/signup:
+    post:
+      tags:
+        - user
+      summary: Signs up a user to the Debugging service
+      description: Creates a user account for the given user details.
+      operationId: signup
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserRegistration'
+        required: true
+      responses:
+        '201':
+          description: Account Created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserAuthenticationSuccess'
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorApiResponse'
+        '409':
+          description: User already exists
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorApiResponse'
+
+  /user/login:
+    post:
+      tags:
+        - user
+      summary: Logs in a user to the Debugging service
+      description: Verify if a logged-in user is valid or not.
+      operationId: login
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserLogin'
+        required: true
+      responses:
+        '200':
+          description: Login Succeeded
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserLogin'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorApiResponse'
+```
+
+For simplicity, I just bring my codes related with sign-up and log-in features. Defining operationId for each http method enables us to invoke that speficifically named method. But I didn't use that function for this time.
+
+```yaml
+components:
+  schemas:
+    UserRegistration:
+      type: object
+      properties:
+        username:
+          type: string
+        password:
+          type: string
+          format: password
+          minLength: 5
+        name:
+          type: string
+        contactNumbers:
+          type: string
+        email:
+          type: string
+          format: email
+        address:
+          type: string
+          nullable: true
+        sizeOfHouse:
+          type: number
+          nullable: true
+        numOfRooms:
+          type: integer
+          nullable: true
+      required:
+        - username
+        - password
+        - name
+        - contactNumbers
+        - email
+      example:
+        username: 김다솔
+        password: abc1234
+        name: Dasol Kim
+        contactNumbers: 010-1111-2222
+        email: sorikiki98@sookmyung.ac.kr
+    UserAuthenticationSuccess:
+      type: object
+      properties:
+        token:
+          type: string
+        username:
+          type: string
+      required:
+        - token
+        - username
+      example:
+        username: 김다솔
+    UserLogin:
+      type: object
+      properties:
+        username:
+          type: string
+        password:
+          type: string
+          format: password
+          minLength: 5
+      required:
+        - username
+        - password
+      example:
+        username: 김다솔
+        password: abc1234
+```
+
+In above section, each element exists to hold various schemas for the specification. I also applied this defined schemas to MySQL workbench in the same way.
+
+```javascript
+// app.ts
+// add these below codes
+const apiJSDocument = yamljs.load('./api/openapi.yaml');
+
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(apiJSDocument));
+```
+
+Finally, I add these codes to app.ts file to convert yaml to json and connect my documentation to a URL. That's awesome! I think OpenApi specification and Swagger is such a fanstastic combination to make our APIs organized and easily understood. I wish I could try other features it provides such as routing, validation and authentication, but for this time I just use it as a means for documentation.
