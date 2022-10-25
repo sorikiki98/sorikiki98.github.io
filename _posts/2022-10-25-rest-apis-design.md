@@ -9,11 +9,10 @@ tags: [Swagger]
 Mostly I prefer designing APIs in advance over coding first. This improves communication and collaboration between team members before and during our project, so it is worth investing your time to develop and deliver APIs. In this project, I used an open api specification(version 3.0.0) to organize and display APIs as a document definition with a Swagger tool, called Swagger Editor.
 I referred to a Open API Specification document on [this website](https://swagger.io/specification/).
 
-** Before demo **
+**Before demo**
 Formatting your documentation as a **yaml** makes it more easy to understand. In this case, you have to install 'yamljs' package to load yaml and switch it to a JSON format. Additionally, to display APIs which is available to see on a seperate url, 'swagger-ui-express' package is also required to install.
 
-**npm install yamljs**
-**npm install swagger-ui-express**
+**npm install yamljs swagger-ui-express**
 
 Now, it's time to code up our own open api documentation using a [Swagger Editor](https://swagger.io/tools/swagger-editor/). In my code, it primarily consists of openapi, info, server, tags, paths and components. Let's look up some core implementation to grasp how it has to be written.
 
