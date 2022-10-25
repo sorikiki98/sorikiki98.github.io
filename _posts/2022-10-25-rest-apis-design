@@ -175,4 +175,4 @@ const apiJSDocument = yamljs.load('./api/openapi.yaml');
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(apiJSDocument));
 ```
 
-Finally, I add these codes to app.ts file to convert yaml to json and connect my documentation to a URL. That's awesome! I think OpenApi specification and Swagger is such a fanstastic combination to make our APIs organized and easily understood. I wish I could try other features it provides such as routing, validation and authentication, but for this time I just use it as a means for documentation.
+Finally, I add these codes to app.ts file to convert yaml to json and connect my documentation to a URL. That's awesome! I think OpenApi specification and Swagger is such a fanstastic combination to make our APIs organized and easily understood. I wish I could try other features it provides such as routing, validation and authentication. However, I just use it as a means for documentation.
