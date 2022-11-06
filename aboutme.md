@@ -4,16 +4,4 @@ title: About me
 subtitle: Android, Server Developer
 ---
 
-My name is Dasol Kim. I have the following qualities:
-
-- deliberate, adventurous, faithful, radiant
-- I have a few experiences to join project as a web (front/server) developer and mobile application developer. And these days I am really into studying ML/DL as well.
-
-What else do you like?
-
-- I often spend my time reading novels, doing pilates and learning new languages(ps. Korean and English are my primary languages.)
-- I went to Canada as my exchange and it inspirse me to dream about working abroad in the future. So I'm gonna write down all of my posts in English.
-
-### My story
-
-I am majoring in Statistics and Computer Science. I have sufficient fundamental knowledge on these two fields and problem solving skills to face with challenges. I would like to record what I did learn from studying alone from now on.
+컴퓨터과학과, 통계학과를 전공하고 있는 숙명여대 재학생 김다솔입니다. 자료구조, 알고리즘 등 필수 전공 과목 지식을 공부한 것 그리고 혼자서 공부하여 프로젝트에 적용해보았던 새로운 기술들을 정리하기 위해 이 블로그를 개설하게 되었습니다. 안드로이드 개발자가 되기 위한 공부를 집중적으로 해왔고 자바와 코틀린 각각의 언어를 사용하여 프로젝트들을 만들어 본 경험이 있습니다. NodeJS와 Express, Python과 Flask를 활용한 서버 사이드 프로젝트에서도 주도적으로 개발에 참여하였습니다. 데이터 사이언스 분야에도 관심이 있어 깊이 있게 공부하는 것을 좋아하고 머신러닝 알고리즘을 직접 구현하여 프로젝트의 메인 기능을 완성시킨 적이 있습니다. 

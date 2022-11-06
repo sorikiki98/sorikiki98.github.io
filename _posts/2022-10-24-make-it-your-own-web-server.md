@@ -8,26 +8,22 @@ tags: [NodeJS, Express, Typescript]
 
 ## Node.js, Express, Typescript 
 
-Node.js is a javascript runtime build on Chrome's V8 engine. It means that we are able to apply javascript to both client side and server side at the same time. And It's common to use Express framework when we build web server using Node.js to make it convenient to use APIs. So I'm gonna focus on the APIs that I used provided by Express.
+NodeJS는 브라우저와 마찬가지로 Chrome이 만든 V8 엔진이 내장되어 자바스크립트를 실행할 수 있는 자바스크립트 런타임 환경이다. 
+자바스크립트 언어를 사용하여 프론트엔드와 백엔드 프로젝트 모두에 적용시킬 수 있다는 의미로 NodeJS가 백엔드 프로그래밍 언어로 각광받는 이유 중 하나이다. 실제로 나 역시 대학교 2학년 때 React 프레임워크를 활용하여 웹 프론트엔드 개발자로서 동아리 메인 사이트를 만드는 프로젝트에 참여한 적이 있기 때문에 자바스크립트 비동기 처리, 타입스크립트 사용 경험이 있었기 때문에 이를 기반으로 자신있게 개발할 수 있었다. 타입스크립트를 적용했을 때가 단순히 자바스크립트 언어만을 사용했을 때보다 타입 에러를 체크하면서 코딩해나갈 수 있기 때문에 개발 생산성이 훨씬 높다는 것을 느꼈다. 더군다나 모바일 클라이언트와 통신하기 위해 필요한 요청과 응답, MySQL에 접근하기 위해 필요한 로직을 구현하기 위해 커스텀 타입, 커스텀 함수를 만드는데 타입스크립트가 매우 유용하게 사용되었다. (앞으로 자바스크립트를 쓰는 프로젝트에 타입스크립트를 배제할 이유가 전혀 없을 것 같다.)
 
-Typescript is a superset of pure javascript, a statically typed language and an object oriented language. I mainly used typescript for this project so it enabled me to avoid confusing typed coding by defining some customized types(data entity, callback, params, return type... etc)
+이 포스팅에서는 학교 친구들과 진행하였던 Debugging의 서버 사이드 프로젝트에서 내가 적용시켰던 주요 기술들, 1. **MVP 아키텍처를 기반으로 설계된 프로젝트 전반의 구조**를 살펴보고 2. **토큰과 미들웨어를 사용하여 인증을 어떻게 처리했는지**에 대해 정리해볼 것이다.
 
-Here, I omit previous procedures to set up my package and required dependencies.
-
+아래 코드는 npm start를 cmd창에 입력하면 타입스크립트를 자바스크립트로 컴파일해주고 변경사항이 생길 때마다 서버를 자동으로 재시작할 수 있도록 해주는 내가 사용했던 아주 유용한 명령어이다. 
 ```json
  "scripts": {
     "start": "concurrently \"tsc -w\" nodemon dist/app"
   }
 ```
 
-This command was very helpful.😁 It converts ts file to js file automatically and run nodemon sequentially.
-
 {: .box-note}
-**Note:** When we import external modules, which are written in pure javascript, we also have to install the extra libraries via npm for typescript-version as dev-dependencies. (They are always prefixed with "@types/...")
+**Note:** 순수 자바스크립트 언어로 작성된 외부 모듈을 타입스크립트 파일에서 import 해오면 에러가 발생한다. 그 이유는 사용하려고 하는 api들의 타입이 정의되지 않았기 때문이다. 따라서 이러한 라이브러리들의 경우 @types/ 로 시작하는 추가적인 라이브러리를 별도로 설치해줘야 한다. 
 
-## Sign-up, Sign-in feature on MVP structure
-
-My ready-made project follows this below structure. Suppose that we are only concerned with how to register a new user and enable the user to log-in for simplicity.
+## MVP 아키텍처 기반으로 구현된 회원가입, 로그인 로직 
 
 **app.ts**
 
@@ -204,13 +200,13 @@ export const pool = mysql.createPool({
 });
 ```
 
-It is important to get a return value after querying a database asynchronously. I frequently access to a mysql database so I made a separate function to create a new promise object. This is because I did not use 'mysql2' module which was not compatible with using typescript.(But please check if someone is going to build a project with typescript.)
+자바스크립트는 **Asynchronous I/O**의 특성때문에 MySQL에 접근하여 원하는 결과를 받아오는 처리를 해주어야 한다. 회원가입, 로그인 기능 외에도 서비스 정보를 불러오고 관심 상품을 추가/삭제하는 등 db에 접근하는 작업이 빈번하므로 createPromiseWithDBQuery라는 유틸리티 함수로 따로 정의해주었다. 프로미스를 직접 반환하고 접근하는데 성공하면 resolve 함수를 콜백에 넘겨주는 방식이다. 내가 개발하는 시점에는 typescript와 mysql2가 호환이 되지 않았기 때문에 이렇게 하는 것이 내 선에서는 최선이었다. 
 
-Note that I improve consistency when it comes to final error-handling, sending a message 'Internal Server error...'. If a promise object calls a reject method, it automatically calls this final method, provided that we already add 'external-async-errors' dependencies to our project package and the return type of middlewares we defined is a promise.
+db에 접근하는데 실패하거나 SQL 쿼리문이 잘못 작성되었을 경우 등 서버 내부에서 오류가 발생하여 통신이 실패할 때 상태코드 500과 함께 'Internal Server error...'라는 메시지를 출력해주는 최종적인 에러 핸들러를 app.js에서 정의해주었다. 원래는 next(error)를 호출해주어야 하지만 사전에 'external-async-errors' 라이브러리를 추가해주어 자동적으로 에러 핸들러가 호출될 수 있다. 이 경우 에러가 발생할 수 있는 미들웨어의 반환 타입이 반드시 프로미스여야한다. 
 
 ## Authentication
 
-[Once the user is logged in, each subsequent request will include the JWT, allowing the user to access routes, services, and resources that are permitted with that token.](https://jwt.io/introduction) Yes, that's what I want. Specifically if someone wants to delete his own account, upload posts or do something meaningful to our application, authorization must be guaranteed for some undesirable scenarios not to happen. [This page](https://github.com/auth0/node-jsonwebtoken) introduces how to use JSON Web tokens.
+[Once the user is logged in, each subsequent request will include the JWT, allowing the user to access routes, services, and resources that are permitted with that token.](https://jwt.io/introduction) 그렇다. 회원가입 혹은 로그인 이후 추가적인 요청들은 인증된 회원만이 리소스에 접근할 수 있어야한다. 회원가입이나 로그인에 성공하면 정해진 시간동안 유효한 토큰을 클라이언트에게 넘겨주고 이를 이용하여 클라이언트가 요청을 할 때마다 헤더에 담아 서버에서 유효한 사용자인지 아닌지의 여부를 확인할 수 있게 해야 한다. [해당 페이지](https://github.com/auth0/node-jsonwebtoken)는 JSON 웹 토큰을 구체적으로 사용하는 방법에 대해 잘 알려주고 있다. 
 
 ```javascript
 function createJWT(userId: number): string {
@@ -219,8 +215,7 @@ function createJWT(userId: number): string {
 	});
 }
 ```
-
-I bring a createJWT function above to check how to create token asynchronously.
+위의 코드는 유저의 고유한 아이디를 넘겨 받아 비동기적으로 토큰을 생성하는 함수이다. 
 
 **/middleware/auth.ts**
 
@@ -236,12 +231,12 @@ export const isAuth = (req: Request, res: Response, next: NextFunction) => {
 
 	let token;
 
-	if (authHeader && authHeader.split(' ')[1]) {
+	if (authHeader && authHeader.split(' ')[0].startsWith('Bearer')) {
 		token = authHeader.split(' ')[1];
 	}
 
 	if (!token) {
-		return res.sendStatus(401);
+		return res.status(401).json({ message: 'Authorization header is invalid.' });
 	}
 
 	jwt.verify(
@@ -249,22 +244,22 @@ export const isAuth = (req: Request, res: Response, next: NextFunction) => {
 		config.jwt.privateKey,
 		async (err: jwt.VerifyErrors | null, decoded: JwtPayloadWithUserId) => {
 			if (err) {
-				console.log(err.message);
-				return res.sendStatus(401);
+				return res.status(401).json({ message: err.message });
 			}
-
+			
 			const user = await UserRepository.findUserById(decoded.userId);
 			if (!user) {
-				return res.sendStatus(401);
+				return res.status(401).json({ message: 'User does not exist.'});
 			}
 
 			req.userId = decoded.userId;
 			next();
 		}
 	);
+};
 ```
+이는 사용자 인증을 하는 미들웨어 함수이다. 헤더의 유효한 토큰이 있는지를 체크하고 비밀키를 이용해 토큰을 해독하여 사용자가 등록이 되어있다면 req에 해독하여 얻어낸 사용자의 고유 아이디를 정의해주고 다음 미들웨어가 정상적으로 호출될 수 있도록 해주었다. 
 
-This is how I define a new middleware function for authentification. We have to check how it sends a request with a received token on the client-side. However, I'll post about this topic next time.
 
 **/routes/user.ts**
 
@@ -274,9 +269,9 @@ userRouter.post('/login', UserController.login);
 userRouter.delete('/', isAuth, UserController.remove);
 userRouter.get('/mypage', isAuth, UserController.getMyPage);
 ```
+마지막으로 해야할 일은 인증이 필요한 router에 isAuth 미들웨어를 컨트롤러 미들웨어 이전에 인자로 추가해주는 것이다. 이렇게 하면 다음 컨트롤러 미들웨어에서 req 파라미터를 통해 userId 속성에 접근할 수 있다. 
 
-The last thing we should do is to add this middleware 'isAuth' before predefined series of middlewares. Now on the next middleware, we are able to access to a 'userId' property through a 'req' parameter.
 
 ## Epilogue
+이 프로젝트는 나의 첫번째 서버 사이드 프로젝트라는 점에서 큰 의의가 있다. 여전히 리팩토링이 필요한 부분이 많고 배워야할 심화 기술이 존재하지만 데이터 베이스 스키마, REST APIs를 설계한 일부터 최종적인 배포까지 백엔드의 기본 A-Z를 터득한 느낌이라 매우 뿌듯하다. 기술의 부족함으로 인해 설문조사 결과를 분석하여 예측 대상을 반환해주는 우리 프로젝트의 메인 서비스 기능을 구현하지 못한 것이 아쉽다. 그래서 다음 백엔드 서비스를 구현할 때에는 최근에 공부한 머신러닝 알고리즘과 파이썬 Flask 프레임워크를 토대로 보다 유용한 분석 및 추천 기능을 개발하는 것을 목표로 삼을 것이다. 
 
-I'm so glad that I finally made my first server-side project, however it still needs a refactoring to make the code more concise. One thing that I've not applied to my project is to analyze survey and predict which item is supposed to be on the result. I realized that I can resolve this problem with a trained machine-learning model. For this reason, I'm going to invest time studying a python web framework, Flask to build a new machine learning application in the end.
