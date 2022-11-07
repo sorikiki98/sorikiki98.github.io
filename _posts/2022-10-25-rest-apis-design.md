@@ -6,15 +6,16 @@ comments: true
 tags: [Swagger]
 ---
 
-Mostly I prefer designing APIs in advance over coding first. This improves communication and collaboration between team members before and during our project, so it is worth investing your time to develop and deliver APIs. In this project, I used an open api specification(version 3.0.0) to organize and display APIs as a document definition with a Swagger tool, called Swagger Editor.
-I referred to a Open API Specification document on [this website](https://swagger.io/specification/).
+## Rest APIs Documentation with Swagger 
+
+보통은 서비스를 본격적으로 구현하기 위해 REST API들을 먼저 설계하는 것이 사용자 입장에서 요구사항을 제대로 이해할 수 있다. 이는 개발 목표를 정확하게 정해 두고 개발을 시작할 수 있어 협업을 하면서 도움이 많이 된다. (**Not code first, Design first**) 그러므로 시간을 들여서라도 데이터 스키마를 먼저 정의하고 필요한 리소스를 접근하기 위한 API들을 사전에 정의해두는 것이 좋은데, 이때 유용한 것이 Open API Specification과 Swagger Tool을 이용하는 것이다. 이를 이용하면 어플리케이션 수준에서 별도의 코드 작성없이도 라우팅과 validation을 지원해주기도 하지만 이러한 기능은 이번 프로젝트에서는 사용하지 않고 문서화를 위해 채택하였다. Open API를 작성하기 위한 구현 방법은 [해당 페이지](https://swagger.io/specification/)를 참고하였다. 
 
 **Before demo**
-Formatting your documentation as a **yaml** makes it more easy to understand. In this case, you have to install 'yamljs' package to load yaml and switch it to a JSON format. Additionally, to display APIs which is available to see on a seperate url, 'swagger-ui-express' package is also required to install.
+프로젝트 내부의 api 폴더에 **open.yaml** 파일을 만들었다. JSON으로 작성하는 것보다 yaml로 작성해서 JSON으로 변환하는 것이 가독성 측면에서 좋다. 또한 별도의 url을 통해 UI적으로 요청 및 응답 스키마, 요청별 발생할 수 있는 상태코드, 그룹화된 태그 등을 시각적으로 확인할 필요가 있다. 따라서 'yamljs'와 'swagger-ui-express'를 프로젝트에 추가해주었다.
 
 **npm install yamljs swagger-ui-express**
 
-Now, it's time to code up our own open api documentation using a [Swagger Editor](https://swagger.io/tools/swagger-editor/). In my code, it primarily consists of openapi, info, server, tags, paths and components. Let's look up some core implementation to grasp how it has to be written.
+아래는 [Swagger Editor](https://swagger.io/tools/swagger-editor/)을 이용해 open api 문서를 코드로 작성해준 결과이다. 크게 openapi(version), info, server, tags, path, components로 구성되어 있다. 어떻게 쓰였는지를 이해하기 위해 코드의 일부 중요한 부분을 살펴보도록 하자.
 
 ```yaml
 tags:
@@ -28,7 +29,7 @@ tags:
     description: Methods to access product information and manage product interests
 ```
 
-I divided APIs into four categories(user, bugs, companies, products) to clarify which resources user request. You can either check which services my project is providing.
+이용가능한 API들은 크게 네 범주로 나뉜다. 접근하는 리소스 종류에 따라 user, bugs, companies, products로 구분하였다. 이를 통해 어플리케이션이 제공하는 메인 서비스들을 쉽게 확인할 수 있다.
 
 ```yaml
 paths:
@@ -93,7 +94,7 @@ paths:
                 $ref: '#/components/schemas/ErrorApiResponse'
 ```
 
-For simplicity, I just bring my codes related with sign-up and log-in features. Defining operationId for each http method enables us to invoke that speficifically named method. But I didn't use that function for this time.
+단순성을 위해 회원 가입과 로그인 기능과 관련된 코드만 가져왔다. 각각의 메소드 별로 operationId를 정의하는 것은 해당 메소드명을 가진 함수를 invoke하여 라우팅을 할 수 있다. 그러나 이 기능은 사용하지 않고 직접 프로그래밍을 해서 작성하였다.  
 
 ```yaml
 components:
@@ -164,7 +165,7 @@ components:
         password: abc1234
 ```
 
-In above section, each element exists to hold various schemas for the specification. I also applied this defined schemas to MySQL workbench in the same way.
+components 섹션에 회원가입 시 body에 들어갈 UserRegistration과 로그인 시 필요한 UserLogin의 스키마를 정의하였다. 
 
 ```javascript
 // app.ts
@@ -173,5 +174,5 @@ const apiJSDocument = yamljs.load('./api/openapi.yaml');
 
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(apiJSDocument));
 ```
+최종적으로 app.ts 파일에 yamljs을 변환하여 json 형식으로 반환된 문서를 /api-docs 경로의 미들웨어로서 추가해주었다. 
 
-Finally, I add these codes to app.ts file to convert yaml to json and connect my documentation to a URL. That's awesome! I think OpenApi specification and Swagger is such a fanstastic combination to make our APIs organized and easily understood. I wish I could try other features it provides such as routing, validation and authentication. However, I just use it as a means for documentation.
