@@ -83,6 +83,7 @@ MySQL에 저장된 companies 테이블에 접근하는 Retrofit 통신을 위한
 
 ## Repository 인터페이스 및 구현체
 
+**CompanyRepository.java**
 ```java
 public interface CompanyRepository {
     Flowable<List<Company>> getCompanies(boolean isFirstLoad);
@@ -110,7 +111,7 @@ public interface CompanyRepository {
     void refreshLocalDataSource(List<Company> companies);
 }
 ```
-
+**CompanyRepositoryImpl.java**
 
 ```java
 @Singleton
