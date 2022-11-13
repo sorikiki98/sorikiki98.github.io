@@ -26,8 +26,9 @@ tags: [Android, RxJava, Retrofit]
 rxandroid 라이브러리는 메인스레드용 스케줄러인 AndroidSchedulers.mainThread() api를 지원해준다. Retrofit Service의 인터페이스의 반환 타입을 더 이상 Call이 아닌 Rxjava에서 지원하는 Observables(Single, Maybe, Completable, Observable, Flowable) 타입으로 mapping 해주기 위해서는 rxjava3용 retrofit 어댑터도 필요하다. 
 
 ## MVP Architecture with RxJava ⭐
+
 ![MVP Architecture](https://github.com/googlesamples/android-architecture/wiki/images/mvp.png){: .mx-auto.d-block :}
-프로젝트에서 사용한 아키텍처의 큰 구조는 위와 같다. RemoteDataSource는 Retrofit 서비스에 접근하는 로직을 작성해주고 LocalDataSource는 Room Dao과 인터랙션하는 로직을 작성해준다. 이렇게 하면 Repository에서 RemoteDatSource 혹은 LocalDataSource에 데이터를 read/write하고 데이터 로딩 이후 어플리케이션 메모리에 캐싱해주는 작업을 진행한다.이후 Presenter는 Repository로부터 연쇄되어 반환된 Observable을 구독하여 메인 스레드 하에서 어떤 View를 Fragment에 display할지 로직을 작성해준다. 이러한 로직을 작성하는데 안드로이드 팀에서 제시한 [architecture-samples 깃헙 레포지토리의 todo-mvp-rxjava 브랜치의 readme](https://github.com/android/architecture-samples/tree/todo-mvp-rxjava)를 참고했기에 큰 도움이 되었다.
+프로젝트에서 사용한 아키텍처의 큰 구조는 위와 같다. RemoteDataSource에는 Retrofit 서비스에 접근하는 로직을 작성해주고 LocalDataSource에는 Room Dao과 인터랙션하는 로직을 작성해준다. 이렇게 하면 Repository에서 RemoteDatSource 혹은 LocalDataSource에 데이터를 read/write하고 데이터 로딩 이후 어플리케이션 메모리에 캐싱해주는 작업을 진행한다. 이후 Presenter에는 Repository로부터 연쇄되어 반환된 Observable을 구독하여 메인 스레드 하에서 어떤 View를 Fragment에 display할지 로직을 작성해준다. 이러한 로직을 작성하는데 안드로이드 팀에서 제시한 [architecture-samples 깃헙 레포지토리의 todo-mvp-rxjava 브랜치의 readme](https://github.com/android/architecture-samples/tree/todo-mvp-rxjava)를 참고했기에 큰 도움이 되었다.
 
 
 ## Observables을 반환하는 API들의 집합 Interface 정의(local, remote)
@@ -81,6 +82,7 @@ public interface CompanyService {
 MySQL에 저장된 companies 테이블에 접근하는 Retrofit 통신을 위한 API를 정의한 인터페이스이다. 각 요청마다 헤더에 들어가는 Bearer 토큰 정보는 Retrofit을 빌드하는 과정에서 따로 interceptor로 처리해주었으므로 인터페이스 내부 각 API들에 따로 파라미터를 추가해줄 필요없다. 이는 다음 포스팅에서 자세히 다룰 예정이다. 사실상 서버에 요청해서 응답을 받아오는 것은 모두 one shot이라고 할 수 있기에 getCompanies 메소드의 리턴 타입을 Flowable로 사용한 것은 의미가 없는 듯하다.
 
 ## Repository 인터페이스 및 구현체
+
 ```java
 public interface CompanyRepository {
     Flowable<List<Company>> getCompanies(boolean isFirstLoad);
@@ -108,6 +110,7 @@ public interface CompanyRepository {
     void refreshLocalDataSource(List<Company> companies);
 }
 ```
+
 
 ```java
 @Singleton
@@ -401,7 +404,7 @@ public interface CompanyListContract {
 ```
 위 인터페이스에 Presenter와 View 간 인터랙션을 위한 api들을 정의해두었다. 
 
-***CompanyListPresenter.java**
+**CompanyListPresenter.java**
 ```java
 public class CompanyListPresenter implements CompanyListContract.Presenter {
     private final CompanyRepository companyRepository;
