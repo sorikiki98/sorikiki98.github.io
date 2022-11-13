@@ -1,7 +1,7 @@
 ---
 layout: post
 title: RxJava with Retrofit
-subtitle: RxJava: Reactive Extensions for the JVM
+subtitle: RxJava, Reactive Extensions for the JVM
 comments: true
 tags: [Android, RxJava, Retrofit]
 ---
