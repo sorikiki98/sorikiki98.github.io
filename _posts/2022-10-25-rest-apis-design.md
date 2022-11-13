@@ -6,8 +6,6 @@ comments: true
 tags: [Swagger]
 ---
 
-## Rest APIs Documentation with Swagger 
-
 보통은 서비스를 본격적으로 구현하기 위해 REST API들을 먼저 설계하는 것이 사용자 입장에서 요구사항을 제대로 이해할 수 있다. 이는 개발 목표를 정확하게 정해 두고 개발을 시작할 수 있어 협업을 하면서 도움이 많이 된다. (**Not code first, Design first**) 그러므로 시간을 들여서라도 데이터 스키마를 먼저 정의하고 필요한 리소스를 접근하기 위한 API들을 사전에 정의해두는 것이 좋은데, 이때 유용한 것이 Open API Specification과 Swagger Tool을 이용하는 것이다. 이를 이용하면 어플리케이션 수준에서 별도의 코드 작성없이도 라우팅과 validation을 지원해주기도 하지만 이러한 기능은 이번 프로젝트에서는 사용하지 않고 문서화를 위해 채택하였다. Open API를 작성하기 위한 구현 방법은 [해당 페이지](https://swagger.io/specification/)를 참고하였다. 
 
 **Before demo**
