@@ -19,7 +19,7 @@ tags: [Android, Navigation]
     implementation "androidx.navigation:navigation-ui:2.5.3"
 ```
 
-메인 액티비티에 종속된 다수의 프래그먼트 간의 navigation을 돕는 주된 구성요소는 크게 navigation graph, NavHostFragment, NavController이다. 메인 액티비티는 NavHostFragment를 뷰로 가지고 있고 NavHostFragment는 res 파일에서 정의된 navigation graph와 관련되어 있다. navigation controller는 관련된 fragment destinations과 그들간 연결 고리인 actions로 구성되어 있다. 그리고 그래프에서 정의한 논리적인 네비게이션 플로우대로 실제로 작동하게 해주는 것이 navcontroller이다. 액션이 발생하면 NavHostFragment에 현재 프래그먼트 destination의 띄워진다. 만일 액티비티가 여러 개라면 각각의 액티비티가 자기만의 navigation graph, NavigationHostFragment와 NavController를 가지게 되는 셈이다. 
+메인 액티비티에 종속된 다수의 프래그먼트 간의 navigation을 돕는 주된 구성요소는 크게 navigation graph, NavHostFragment, NavController이다. 메인 액티비티는 NavHostFragment를 뷰로 가지고 있고 NavHostFragment는 res 파일에서 정의된 navigation graph와 관련되어 있다. navigation graph는 관련된 fragment destinations과 그들간 연결 고리인 actions로 구성되어 있다. 그리고 그래프에서 정의한 논리적인 네비게이션 플로우대로 실제로 작동하게 해주는 것이 navcontroller이다. 액션이 발생하면 NavHostFragment에 현재 프래그먼트 destination의 띄워진다. 만일 액티비티가 여러 개라면 각각의 액티비티가 자기만의 navigation graph, NavHostFragment와 NavController를 가지게 되는 셈이다. 
 
 ## Create navigation components with a ToolBar
 
@@ -90,10 +90,10 @@ tags: [Android, Navigation]
 </navigation>
 ```
 
-![navigation-graph](/assets/img/avatar-icon.png){: .mx-auto.d-block :}
+![navigation-graph](/assets/img/navigation-flow.png){: .mx-auto.d-block :}
 디자인 모드에서 destination을 추가하고 드래그를 통해 arrow로 연결해서 손쉽게 navigation graph를 만들수도 있다.
 
-어플리케이션에서 제공하는 업체 관련 UI 컴포넌트는 CompanyActivity와 여기에 종속된 CompanyListFragment, CompanyItemFragment, CompanyReservationFragment, CompanyReservationCheckFragment, CompanyReservationCompletedFragment이다. 이들 간 네비게이션 플로우에 대한 navigation xml 파일을 보면 일부 액션들에 popUpTo와 popUpToInclusive 옵션이 추가된 것을 볼 수 있다. 예를 들면 CompanySearchFragment에서 CompanyItemFragment로  navigate할 때 액션의 popUpTo를 navigation의 출발점인 CompanySearchFragment, 그리고 popUpTo를 true로 해주었기에 네비게이션 액션 발생 직전 CompanySearchFragment는 백스택에서 삭제된다. 따라서 CompanyItemFragment에서 뒤로가기를 하게 되면 백스택 상단에 있는, 동시에 CompanySearchFragment 바로 밑에 있었던 CompanyListFragment로 이동할 수 있게 된다. 그리고 CompanyReservationCheckFragment에서 CompanyReservationCompletedFragment로 넘어가는 액션에서 popUpTo를 CompanyReservationFragment, popUpTo를 true로 해주었기 때문에 예약완료 화면에서 뒤로 간다면 예약 폼을 작성하기 바로 이전의 화면인 예약한 업체 아이템의 화면(CompanyItemFragment)으로 넘어가는 것이다. 
+어플리케이션에서 제공하는 업체 관련 UI 컴포넌트는 CompanyActivity와 여기에 종속된 CompanyListFragment, CompanyItemFragment, CompanyReservationFragment, CompanyReservationCheckFragment, CompanyReservationCompletedFragment이다. 이들 간 네비게이션 플로우에 대한 navigation xml 파일을 보면 일부 액션들에 popUpTo와 popUpToInclusive 옵션이 추가된 것을 볼 수 있다. 예를 들면 CompanySearchFragment에서 CompanyItemFragment로  navigate할 때 액션의 popUpTo를 navigation의 출발점인 CompanySearchFragment, 그리고 popUpTo를 true로 해주었기에 네비게이션 액션 발생 직전 CompanySearchFragment는 백스택에서 삭제된다. 따라서 CompanyItemFragment에서 뒤로가기를 하게 되면 백스택 상단에 있는, 동시에 CompanySearchFragment 바로 밑에 있었던 CompanyListFragment로 이동할 수 있게 된다. 그리고 CompanyReservationCheckFragment에서 CompanyReservationCompletedFragment로 넘어가는 액션의 popUpTo를 CompanyReservationFragment, popUpTo를 true로 해주었기 때문에 예약완료 화면에서 뒤로 간다면 예약 폼을 작성하기 바로 이전의 화면인 예약한 업체 아이템의 화면(CompanyItemFragment)으로 넘어가는 것이다. 
 
 **activity_company.xml**
 ```xml
@@ -207,14 +207,14 @@ Toolbar 역시 나중에 navController와 연결해줄 것이다. 이들을 연�
     }
 //
 ```
-어떤 fragment에서 다른 fragment로 넘어가는 로직은 프래그먼트 내부에서 NavController 객체의 navigate(액션 아이디, bundle)을 호출해준다. 이때 type-safe navigation을 보장하는 Safe Args라고 불리는 Gradle 플러그인을 사용하여 data를 전달해도 되지만 나의 경우 Bundle을 이용해 직접 데이터를 전달하는 식으로 구현하였다.
+어떤 fragment에서 다른 fragment로 넘어가기 위해 프래그먼트 내부에서 NavController 객체의 navigate(액션 아이디, bundle)을 호출해준다. 이때 type-safe navigation을 보장하는 Safe Args라고 불리는 Gradle 플러그인을 사용하여 data를 전달해도 되지만 나의 경우 Bundle을 이용해 직접 데이터를 전달하는 식으로 구현하였다.
 
-지금까지 살펴보면 하나의 메인 액티비티와 다수의 프래그먼트, 이 한 묶음에 대해 NavHostFragment, NavController, navigation_graph를 생성할 수 있고  이러한 navigation 로직과 configuration을 ToolBar에 적용시켜 업버튼 이벤트를 손쉽게 처리할 수 있었다. 
+여기까지 정리하면 하나의 메인 액티비티와 다수의 프래그먼트, 이 한 묶음에 대해 NavHostFragment, NavController, navigation_graph를 생성할 수 있고  이러한 navigation 로직과 configuration을 ToolBar에 적용시켜 업버튼 이벤트를 손쉽게 처리할 수 있었다. 
 
 ## Add a navigation drawer
 로그인에 성공하면 시작되는 HomeActivity는 Navigation Drawer를 포함하고 있다. Navigation Drawer는 앱바 왼쪽에 있는 drawer 아이콘을 클릭하거나 왼쪽에서 오른쪽으로 스와이프할 때 볼 수 있다. 이는 메뉴를 포함하고 있는데, 어플리케이션에서 별도의 컨테이너 없이 메뉴만 생성하는 경우, 액티비티나 프래그먼트의 onCreateOptionsMenu(Menu menu)와 onOptionsItemSelected(MenuItem item) 메소드를 오버라이딩해서 구현하면 UI 컴포넌트가 시작할 때 onCreateOptionsMenu가 호출되고 메뉴 아이템이 클릭될 때마다 onOptionsItemSelected가 호출되는 것으로 알려져있다. 만일 onOptionsItemSelected 메소드 내부에서 NavigationUI.onNavDestinationsSelected(item, navController)를 통해 메뉴 아이템의 아이디와 navController와 연결된 nav_graph의 어떤 destination의 id가 같다면 해당 메뉴 아이템 클릭시 그 destination으로 이동할 수 있다. 결국 navigation 로직을 각각의 메뉴 아이템에도 적용시킬 수 있다는 의미이다.
 
-그러나 여기서는 Navigation drawer가 fragments가 아닌 activities 간의 이동을 위한 메뉴로 구성이 되어있기 때문에 이를 위한 navigation component들로 구성된 로직을 작성해주지 않았고 대신에 메뉴 아이템 클릭시 Intent로 다른 액티비티로 넘어가도록 해주었다. 
+그러나 여기서는 Navigation drawer가 fragments가 아닌 activities 간의 이동을 위한 메뉴로 구성이 되어있기 때문에 이를 위한 navigation component을 이용한 로직을 연결해주지 않았고 대신에 메뉴 아이템 클릭시 Intent를 통해 다른 액티비티로 넘어가도록 해주었다. 
 
 **main_menu.xml**
 ```xml
@@ -446,12 +446,22 @@ Toolbar 역시 나중에 navController와 연결해줄 것이다. 이들을 연�
 
 </androidx.drawerlayout.widget.DrawerLayout>
 ```
-Navigaiton Drawable이 잘 동작하려면 우선 액티비티의 최상단 루트뷰가 DrawerLayout 이어야한다. 이는 메뉴가 들어가는 NavigationView를 포함하고 있다.
+Navigation Drawer이 잘 동작하려면 우선 액티비티의 최상단 루트뷰가 DrawerLayout 이어야한다. 이는 메뉴가 들어가는 NavigationView를 포함하고 있다.
 또한 메뉴의 하단에 보여질 로그아웃과 회원탈퇴를 할 수 있는 텍스트 뷰를 배치해주었다. 
 
 
 **HomeActivity.java**
 ```java
+    private void setNavController() {
+        Toolbar toolBar = binding.toolBar;
+        NavHostFragment navHostFragment = (NavHostFragment) getSupportFragmentManager().findFragmentById(R.id.nav_host_fragment_container);
+        NavController navController = navHostFragment.getNavController();
+        AppBarConfiguration configuration = new AppBarConfiguration.Builder(navController.getGraph())
+                .setOpenableLayout(drawerLayout)
+                .build();
+        NavigationUI.setupWithNavController(toolBar, navController, configuration);
+    }
+
     private void setNavigationDrawer() {
         NavigationView navView = binding.navView;
         View header = navView.inflateHeaderView(R.layout.main_menu_header);
@@ -488,6 +498,6 @@ Navigaiton Drawable이 잘 동작하려면 우선 액티비티의 최상단 루�
         }
     }
 ```
-HomeActivity에서 위에서 생성한 커스텀 헤더 레이아웃을 inflate해주었고 메뉴 아이템의 클릭 이벤트 리스너를 바인딩해주었다. Navigation Drawer에 종속된 메뉴에 대한 아이템 클릭 리스너는 이와 같이 setNavigationItemSelectedListener 메소드를 통해 설정해주고 마찬가지로 리턴 타입은 boolean이어야 한다. 
+HomeActivity에서 위에서 생성한 커스텀 헤더 레이아웃을 inflate해주었고 메뉴 아이템의 클릭 이벤트 리스너를 바인딩해주었다. Navigation Drawer에 종속된 메뉴에 대한 아이템 클릭 리스너는 이와 같이 setNavigationItemSelectedListener 메소드를 통해 설정해주고 마찬가지로 리턴 타입은 boolean이어야 한다. 또한 툴바의 configuration과 drawerLayout을 연결해주어야 HomeActivity의 툴바에서 drawer icon을 확인할 수 있다. 
 
 지금까지 Navigation Component들을 이용하여 네비게이션 로직을 작성하고 이를 Toolbar에도 적용시켜보았다. navigation graph의 옵션을 활용하여 액션 발생 시 백스택을 원하는 로직대로 관리해 Toolbar의 업버튼 이벤트 결과에 영향을 줄 수 있었다. Navigation Drawer 내부의 메뉴 역시 이러한 navigation component 로직의 적용을 받을 수 있지만 그렇게 해주지 않고 NavigationView의 setter를 통해 별도로 클릭 이벤트 리스너를 추가해주었다. 뿐만 아니라 Navigation Drawer에 커스텀 헤더뷰를 inflate 함으로써 현재 접속한 유저의 정보를 간단하게 보여주는 로직까지 작성해보았다. 
